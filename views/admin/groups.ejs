@@ -1,0 +1,11 @@
+<%- include('../partials/head') %>
+<main class="wrap">
+  <div class="page-head"><h1>Groupes / Klassen</h1></div>
+  <%- include('../partials/flash') %>
+  <div class="card table-wrap"><table>
+    <tr><th>Groupe</th><th>Niveau</th><th>Professeur</th><th>Horaires</th><th>Période</th><th>Étudiants</th></tr>
+    <% groups.forEach(g => { %><tr><td><a href="/admin/groups/<%= g.id %>"><strong><%= g.name %></strong></a></td><td><span class="badge lvl lvl-<%= g.level %>"><%= g.level %></span></td><td><%= g.teacher || '—' %></td><td class="small"><%= g.schedule %></td><td class="small"><%= g.start_date || '' %> → <%= g.end_date || '' %></td><td><%= g.n %></td></tr><% }) %>
+  </table><% if (!groups.length) { %><div class="empty">Aucun groupe.</div><% } %></div>
+  <div class="card"><h2>Nouveau groupe</h2><form method="post" action="/admin/groups"><%- include('../partials/csrf') %><%- include('_group-fields', { g: { level: 'A1' } }) %><button class="btn">Créer</button></form></div>
+</main>
+<%- include('../partials/foot') %>

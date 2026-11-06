@@ -1,0 +1,36 @@
+<%- include('../partials/head') %>
+<main class="wrap">
+  <div class="crumbs"><a href="/teach/exams">Examens</a> / <%= exam.title %></div>
+  <div class="page-head"><h1><%= exam.title %></h1>
+    <div class="actions"><a class="btn secondary" href="/teach/exams/<%= exam.id %>/results">Résultats</a>
+      <form method="post" action="/exams/<%= exam.id %>/start" class="inline"><%- include('../partials/csrf') %><button class="btn secondary">Tester</button></form>
+      <form method="post" action="/teach/exams/<%= exam.id %>/duplicate" class="inline"><%- include('../partials/csrf') %><button class="btn secondary">Dupliquer</button></form></div></div>
+  <%- include('../partials/flash') %>
+  <div class="cols">
+    <div>
+      <% const total = questions.reduce((s, q) => s + q.points, 0); %>
+      <div class="card"><h2>Questions (<%= questions.length %> · <%= total %> points)</h2>
+        <% if (!questions.length) { %><div class="empty">Ajoutez la première question ci-dessous.</div><% } %>
+        <% questions.forEach((q, i) => { %>
+          <div class="q" id="q<%= q.id %>">
+            <div class="qh"><span><%= SECTION_ICON[q.section] %> <%= q.section %> · <%= QTYPE[q.type] %> · #<%= q.position %></span><span><%= q.points %> pt</span></div>
+            <div class="content"><%- md(q.prompt) %></div>
+            <% if (q.media_path) { %><div class="small muted">📎 média joint</div><% } %>
+            <% if (q.type === 'mcq') { %><ol class="small"><% q.options.forEach((o, j) => { %><li style="<%= String(q.answer) === String(j) ? 'color:var(--green);font-weight:700' : '' %>"><%= o %></li><% }) %></ol>
+            <% } else if (q.type === 'tf') { %><p class="small">Réponse : <strong><%= q.answer === 'true' ? 'Richtig' : 'Falsch' %></strong></p>
+            <% } else if (q.type === 'short') { %><p class="small">Réponse(s) : <strong><%= q.answer %></strong></p><% } %>
+            <div class="actions"><a class="btn secondary sm" href="?q=<%= q.id %>#edit">Modifier</a>
+              <form method="post" action="/teach/questions/<%= q.id %>/delete" class="inline" data-confirm="Supprimer cette question ?"><%- include('../partials/csrf') %><button class="btn danger sm">Supprimer</button></form></div>
+          </div>
+        <% }) %>
+      </div>
+      <% if (edit) { %><div class="card" id="edit" style="border-color:var(--primary-2)"><h2>Modifier la question</h2><%- include('_question-form', { qq: edit }) %></div>
+      <% } else { %><div class="card" id="add"><h2>Ajouter une question</h2><%- include('_question-form', { qq: null }) %></div><% } %>
+    </div>
+    <div class="card"><h2>Paramètres</h2>
+      <form method="post" action="/teach/exams/<%= exam.id %>"><%- include('../partials/csrf') %><%- include('_exam-fields') %><p><button class="btn">Enregistrer</button></p></form>
+      <form method="post" action="/teach/exams/<%= exam.id %>/delete" data-confirm="Supprimer cet examen, ses questions et toutes les copies ?"><%- include('../partials/csrf') %><button class="btn danger sm">Supprimer l'examen</button></form>
+    </div>
+  </div>
+</main>
+<%- include('../partials/foot') %>

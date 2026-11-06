@@ -1,0 +1,16 @@
+<%- include('../partials/head') %>
+<main class="wrap"><div class="card auth" style="max-width:520px">
+  <h1>Mon profil</h1>
+  <%- include('../partials/flash') %>
+  <form method="post" action="/profile">
+    <%- include('../partials/csrf') %>
+    <div class="field"><label>E-mail</label><input type="email" value="<%= me.email %>" disabled></div>
+    <div class="field"><label>Nom complet</label><input type="text" name="name" value="<%= me.name %>" required></div>
+    <div class="field"><label>Téléphone</label><input type="tel" name="phone" value="<%= me.phone || '' %>"></div>
+    <h3 style="margin-top:20px">Changer le mot de passe</h3>
+    <div class="field"><label>Mot de passe actuel</label><input type="password" name="current" autocomplete="current-password"></div>
+    <div class="field"><label>Nouveau mot de passe</label><input type="password" name="password" minlength="8" autocomplete="new-password"></div>
+    <button class="btn">Enregistrer</button>
+  </form>
+</div></main>
+<%- include('../partials/foot') %>

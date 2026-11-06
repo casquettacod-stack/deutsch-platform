@@ -1,0 +1,10 @@
+<%- include('../partials/head') %>
+<main class="wrap">
+  <div class="page-head"><h1>Cours</h1><a class="btn" href="/teach/courses/new">+ Nouveau cours</a></div>
+  <%- include('../partials/flash') %>
+  <div class="card table-wrap"><table>
+    <tr><th>Cours</th><th>Niveau</th><th>Professeur</th><th>Leçons</th><th>Inscrits</th><th>Statut</th></tr>
+    <% courses.forEach(c => { %><tr><td><a href="/teach/courses/<%= c.id %>"><strong><%= c.title %></strong></a></td><td><span class="badge lvl lvl-<%= c.level %>"><%= c.level %></span></td><td><%= c.teacher || '—' %></td><td><%= c.nl %></td><td><%= c.ns %></td><td><span class="badge <%= c.published ? 'ok' : '' %>"><%= c.published ? 'Publié' : 'Brouillon' %></span></td></tr><% }) %>
+  </table><% if (!courses.length) { %><div class="empty">Aucun cours. Créez le premier !</div><% } %></div>
+</main>
+<%- include('../partials/foot') %>

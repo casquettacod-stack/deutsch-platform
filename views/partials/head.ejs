@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><%= title ? title + ' · ' : '' %><%= centerName %></title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="/static/css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 3'><rect width='3' height='1' fill='%23111'/><rect y='1' width='3' height='1' fill='%23c62828'/><rect y='2' width='3' height='1' fill='%23d4a017'/></svg>">
+</head>
+<body>
+<div class="flagbar"></div>
+<% if (typeof bare === 'undefined' || !bare) { %>
+<nav class="nav"><div class="in">
+  <a class="brand" href="/"><span class="logo">DE</span><%= centerName %></a>
+  <button class="btn secondary sm menu-toggle" type="button" aria-label="Menu">☰</button>
+  <div class="links">
+  <% const on = p => path === p || (p !== '/' && path.startsWith(p + '/')) ? 'on' : ''; %>
+  <% if (!user) { %>
+    <a href="/#niveaux">Niveaux</a><a href="/#examens">Examens</a><a href="/#contact">Contact</a>
+  <% } else if (user.role === 'student') { %>
+    <a class="<%= on('/dashboard') %>" href="/dashboard">Accueil</a>
+    <a class="<%= on('/courses') %>" href="/courses">Mes cours</a>
+    <a class="<%= on('/exams') %>" href="/exams">Examens</a>
+    <a class="<%= on('/results') %>" href="/results">Mes notes</a>
+  <% } else { %>
+    <a class="<%= path === '/teach' ? 'on' : '' %>" href="/teach">Professeur</a>
+    <a class="<%= on('/teach/courses') %>" href="/teach/courses">Cours</a>
+    <a class="<%= on('/teach/exams') %>" href="/teach/exams">Examens</a>
+    <a class="<%= on('/teach/review') %>" href="/teach/review">À corriger</a>
+    <% if (user.role === 'admin') { %>
+      <a class="<%= path === '/admin' ? 'on' : '' %>" href="/admin">Admin</a>
+      <a class="<%= on('/admin/users') %>" href="/admin/users">Utilisateurs</a>
+      <a class="<%= on('/admin/groups') %>" href="/admin/groups">Groupes</a>
+      <a class="<%= on('/admin/leads') %>" href="/admin/leads">Demandes</a>
+      <a class="<%= on('/admin/announcements') %>" href="/admin/announcements">Annonces</a>
+    <% } %>
+  <% } %>
+  </div>
+  <div class="me">
+  <% if (user) { %>
+    <a href="/profile" class="small"><%= user.name %><% if (user.level) { %> · <span class="badge lvl lvl-<%= user.level %>"><%= user.level %></span><% } %></a>
+    <form method="post" action="/logout" class="inline"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn secondary sm">Déconnexion</button></form>
+  <% } else { %>
+    <a href="/login" class="btn secondary sm">Connexion</a>
+    <a href="/register" class="btn sm">S'inscrire</a>
+  <% } %>
+  </div>
+</div></nav>
+<% } %>

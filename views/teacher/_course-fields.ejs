@@ -1,0 +1,7 @@
+<div class="field"><label>Titre</label><input type="text" name="title" value="<%= course.title || '' %>" required placeholder="ex. Deutsch A1.1 – Grundkurs"></div>
+<div class="row">
+  <div class="field"><label>Niveau</label><select name="level"><% LEVELS.forEach(l => { %><option <%= course.level === l ? 'selected' : '' %>><%= l %></option><% }) %></select></div>
+  <div class="field"><label>Professeur</label><select name="teacher_id"><option value="">—</option><% teachers.forEach(t => { %><option value="<%= t.id %>" <%= course.teacher_id === t.id ? 'selected' : '' %>><%= t.name %></option><% }) %></select></div>
+</div>
+<div class="field"><label>Description</label><textarea name="description"><%= course.description || '' %></textarea></div>
+<label class="check"><input type="checkbox" name="published" value="1" <%= course.published ? 'checked' : '' %>> Publié (visible par les étudiants inscrits)</label>

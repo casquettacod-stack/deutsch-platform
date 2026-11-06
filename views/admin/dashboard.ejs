@@ -1,0 +1,29 @@
+<%- include('../partials/head') %>
+<main class="wrap">
+  <div class="page-head"><h1>Administration</h1><div class="actions"><a class="btn" href="/admin/users/new">+ Utilisateur</a><a class="btn secondary" href="/admin/backup">⬇ Sauvegarde</a></div></div>
+  <%- include('../partials/flash') %>
+  <div class="grid g3 stats" style="margin-bottom:18px">
+    <a class="stat tile" href="/admin/users?role=student"><div class="v"><%= stats.students %></div><div class="l">Étudiants actifs</div></a>
+    <a class="stat tile" href="/admin/users?role=teacher"><div class="v"><%= stats.teachers %></div><div class="l">Professeurs</div></a>
+    <a class="stat tile" href="/admin/groups"><div class="v"><%= stats.groups %></div><div class="l">Groupes</div></a>
+    <a class="stat tile" href="/teach/courses"><div class="v"><%= stats.courses %></div><div class="l">Cours publiés</div></a>
+    <div class="stat"><div class="v"><%= stats.attempts %></div><div class="l">Examens passés (30 j)</div></div>
+    <a class="stat tile" href="/admin/leads"><div class="v" style="color:var(--orange)"><%= stats.leads %></div><div class="l">Demandes non traitées</div></a>
+  </div>
+  <div class="grid g2">
+    <div class="card"><h2>Étudiants par niveau</h2>
+      <% const max = Math.max(1, ...byLevel.map(b => b.n)); byLevel.forEach(b => { %>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><span style="width:28px;font-weight:700"><%= b.level %></span><div class="progress" style="flex:1;height:14px"><span style="width:<%= b.n / max * 100 %>%;background:var(--primary-2)"></span></div><span class="small" style="width:30px;text-align:right"><%= b.n %></span></div>
+      <% }) %><% if (!byLevel.length) { %><p class="muted">Aucun étudiant.</p><% } %>
+    </div>
+    <div class="card"><h2>Nouvelles demandes</h2>
+      <% leads.forEach(l => { %><div style="padding:8px 0;border-bottom:1px solid var(--border)"><strong><%= l.name %></strong> · <a href="tel:<%= l.phone %>"><%= l.phone %></a> <%= l.level ? '· ' + l.level : '' %><div class="small muted"><%= fmtDate(l.created_at) %></div></div><% }) %>
+      <% if (!leads.length) { %><p class="muted">Aucune nouvelle demande.</p><% } %>
+      <p><a href="/admin/leads">Toutes les demandes →</a></p>
+    </div>
+  </div>
+  <div class="card"><h2>Derniers examens passés</h2><div class="table-wrap"><table>
+    <% recent.forEach(r => { %><tr><td><%= r.name %></td><td><%= r.title %></td><td class="small"><%= fmtDate(r.submitted_at) %></td><td><%= STATUS[r.status] %></td><td><%= r.score %>/<%= r.max_score %></td></tr><% }) %>
+  </table></div></div>
+</main>
+<%- include('../partials/foot') %>

@@ -1,0 +1,32 @@
+<%- include('../partials/head') %>
+<main class="wrap">
+  <div class="page-head"><h1>Mes notes & résultats</h1></div>
+  <div class="card">
+    <h2>Examens en ligne</h2>
+    <% if (!attempts.length) { %><p class="muted">Aucun examen passé.</p><% } else { %>
+    <div class="table-wrap"><table>
+      <tr><th>Examen</th><th>Date</th><th>Statut</th><th>Note</th><th></th></tr>
+      <% attempts.forEach(a => { const p = pct(a.score, a.max_score); %>
+      <tr><td><strong><%= a.title %></strong> <span class="badge lvl lvl-<%= a.level %>"><%= a.level %></span></td><td class="small"><%= fmtDate(a.submitted_at) %></td>
+        <td><%= STATUS[a.status] %></td>
+        <td><% if (a.status === 'graded') { %><strong><%= a.score %>/<%= a.max_score %></strong> <span class="badge <%= a.kind === 'placement' ? '' : (p >= a.pass_percent ? 'ok' : 'ko') %>"><%= p %>%</span><% } else { %>—<% } %></td>
+        <td class="right"><a href="/results/<%= a.id %>">Détails</a></td></tr>
+      <% }) %>
+    </table></div><% } %>
+  </div>
+  <div class="card">
+    <h2>Notes du professeur (contrôle continu, oral…)</h2>
+    <% if (!grades.length) { %><p class="muted">Aucune note pour l'instant.</p><% } else { %>
+    <div class="table-wrap"><table>
+      <tr><th>Évaluation</th><th>Compétence</th><th>Groupe</th><th>Note</th><th>Commentaire</th><th>Date</th></tr>
+      <% grades.forEach(g => { %>
+      <tr><td><strong><%= g.title %></strong></td><td><%= g.skill ? (SECTION_ICON[g.skill] || '') + ' ' + g.skill : '—' %></td><td class="small"><%= g.group_name || '—' %></td>
+        <td><strong><%= g.score %></strong>/<%= g.max_score %></td><td class="small"><%= g.comment || '' %></td><td class="small muted"><%= fmtDate(g.created_at) %></td></tr>
+      <% }) %>
+    </table></div>
+    <% const avg = grades.reduce((s, g) => s + g.score / g.max_score * 20, 0) / grades.length; %>
+    <p style="margin-top:12px">Moyenne générale : <strong><%= avg.toFixed(2) %> / 20</strong></p>
+    <% } %>
+  </div>
+</main>
+<%- include('../partials/foot') %>

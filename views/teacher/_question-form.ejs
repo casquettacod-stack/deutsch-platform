@@ -1,0 +1,24 @@
+<% const q = qq || { section: 'Lesen', type: 'mcq', points: 1, options: ['', '', '', ''], answer: '0', position: '' }; const opts = q.options && q.options.length ? q.options.concat(Array(Math.max(0, 4 - q.options.length)).fill('')) : ['', '', '', '']; %>
+<form method="post" enctype="multipart/form-data" action="<%= q.id ? '/teach/questions/' + q.id : '/teach/exams/' + exam.id + '/questions' %>" data-qform>
+  <%- include('../partials/csrf') %>
+  <div class="row">
+    <div class="field"><label>Partie</label><select name="section"><% SECTIONS.forEach(s => { %><option <%= q.section === s ? 'selected' : '' %>><%= s %></option><% }) %></select></div>
+    <div class="field"><label>Type</label><select name="type"><% Object.entries(QTYPE).forEach(([k, v]) => { %><option value="<%= k %>" <%= q.type === k ? 'selected' : '' %>><%= v %></option><% }) %></select></div>
+    <div class="field" style="flex:0 1 90px"><label>Points</label><input type="number" step="0.5" min="0" name="points" value="<%= q.points %>"></div>
+    <div class="field" style="flex:0 1 90px"><label>Ordre</label><input type="number" name="position" value="<%= q.position %>"></div>
+  </div>
+  <div class="field"><label>Énoncé / texte</label><textarea name="prompt" required placeholder="Lesen Sie den Text und kreuzen Sie an…"><%= q.prompt || '' %></textarea></div>
+  <div data-for="mcq" class="field"><label>Options (cochez la bonne réponse)</label>
+    <% opts.forEach((o, i) => { %><div class="row" style="align-items:center;margin-bottom:6px"><input type="radio" name="correct" value="<%= i %>" style="flex:0 0 auto" <%= String(q.answer) === String(i) ? 'checked' : '' %>><input type="text" name="options[]" value="<%= o %>" placeholder="Option <%= i + 1 %>"></div><% }) %>
+    <div class="help">Laissez vide les options inutiles. Pour ajouter plus d'options, enregistrez puis modifiez.</div>
+  </div>
+  <div data-for="tf" class="field"><label>Bonne réponse</label>
+    <label class="check"><input type="radio" name="tf" value="true" <%= q.answer !== 'false' ? 'checked' : '' %>> Richtig</label>
+    <label class="check"><input type="radio" name="tf" value="false" <%= q.answer === 'false' ? 'checked' : '' %>> Falsch</label></div>
+  <div data-for="short" class="field"><label>Réponses acceptées</label><input type="text" name="answer" value="<%= q.type === 'short' ? q.answer : '' %>" placeholder="bin|Bin"><div class="help">Séparez plusieurs réponses acceptées par | (majuscules et ß/ss ignorés)</div></div>
+  <div data-for="essay" class="help" style="margin-bottom:12px">✍️ Rédaction libre : la copie sera envoyée en correction manuelle.</div>
+  <div class="field"><label>Audio / image (Hören)</label><input type="file" name="media" accept="audio/*,image/*">
+    <% if (q.media_path) { %><div class="help">Fichier actuel joint · <label class="check inline"><input type="checkbox" name="remove_media" value="1"> supprimer</label></div><% } %></div>
+  <button class="btn"><%= q.id ? 'Enregistrer la question' : '+ Ajouter la question' %></button>
+  <% if (q.id) { %><a class="btn secondary" href="/teach/exams/<%= exam.id %>">Annuler</a><% } %>
+</form>

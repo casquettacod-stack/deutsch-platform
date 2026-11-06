@@ -1,0 +1,22 @@
+<%- include('../partials/head') %>
+<main class="wrap">
+  <div class="page-head"><h1>Espace professeur</h1><div class="actions"><a class="btn" href="/teach/courses/new">+ Cours</a><a class="btn secondary" href="/teach/exams/new">+ Examen</a></div></div>
+  <%- include('../partials/flash') %>
+  <div class="grid g4 stats" style="margin-bottom:18px">
+    <div class="stat"><div class="v"><%= stats.students %></div><div class="l">Étudiants actifs</div></div>
+    <div class="stat"><div class="v"><%= stats.courses %></div><div class="l">Cours</div></div>
+    <div class="stat"><div class="v"><%= stats.exams %></div><div class="l">Examens</div></div>
+    <div class="stat"><div class="v" style="color:var(--orange)"><%= stats.pending %></div><div class="l">Copies à corriger</div></div>
+  </div>
+  <div class="grid g2">
+    <div class="card"><h2>Mes groupes</h2>
+      <% if (!groups.length) { %><p class="muted">Aucun groupe attribué. L'administrateur crée les groupes.</p><% } %>
+      <table><% groups.forEach(g => { %><tr><td><a href="/teach/groups/<%= g.id %>"><strong><%= g.name %></strong></a><div class="small muted"><%= g.schedule || '' %></div></td><td><span class="badge lvl lvl-<%= g.level %>"><%= g.level %></span></td><td class="right small"><%= g.n %> étudiants</td></tr><% }) %></table>
+    </div>
+    <div class="card"><h2>Copies à corriger</h2>
+      <% if (!pending.length) { %><p class="muted">Rien à corriger 🎉</p><% } %>
+      <table><% pending.forEach(p => { %><tr><td><strong><%= p.name %></strong><div class="small muted"><%= p.title %></div></td><td class="small"><%= fmtDate(p.submitted_at) %></td><td class="right"><a class="btn sm" href="/teach/attempts/<%= p.id %>">Corriger</a></td></tr><% }) %></table>
+    </div>
+  </div>
+</main>
+<%- include('../partials/foot') %>

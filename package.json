@@ -1,0 +1,27 @@
+{
+  "name": "deutsch-platform",
+  "version": "1.0.0",
+  "description": "Plateforme e-learning pour centre de langue allemande",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning src/app.js",
+    "dev": "node --disable-warning=ExperimentalWarning --watch src/app.js",
+    "seed": "node --disable-warning=ExperimentalWarning src/seed.js",
+    "seed:demo": "node --disable-warning=ExperimentalWarning src/seed.js --demo",
+    "test": "node --disable-warning=ExperimentalWarning test/smoke.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "ejs": "^7.0.2",
+    "express": "^5.3.0",
+    "express-session": "^1.19.0",
+    "helmet": "^8.3.0",
+    "multer": "^2.5.0"
+  },
+  "engines": {
+    "node": ">=22.5"
+  },
+  "private": true
+}

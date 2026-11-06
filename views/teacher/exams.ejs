@@ -1,0 +1,13 @@
+<%- include('../partials/head') %>
+<main class="wrap">
+  <div class="page-head"><h1>Examens</h1><a class="btn" href="/teach/exams/new">+ Nouvel examen</a></div>
+  <%- include('../partials/flash') %>
+  <div class="card table-wrap"><table>
+    <tr><th>Examen</th><th>Type</th><th>Niveau</th><th>Questions</th><th>Durée</th><th>Copies</th><th>Statut</th><th></th></tr>
+    <% exams.forEach(e => { %><tr><td><a href="/teach/exams/<%= e.id %>"><strong><%= e.title %></strong></a><div class="small muted"><%= e.course || 'Libre (tous les étudiants du niveau)' %></div></td>
+      <td><%= KIND[e.kind] %></td><td><span class="badge lvl lvl-<%= e.level %>"><%= e.level %></span></td><td><%= e.nq %> <span class="small muted">(<%= e.pts || 0 %> pts)</span></td><td><%= e.duration_min %> min</td>
+      <td><a href="/teach/exams/<%= e.id %>/results"><%= e.na %></a></td><td><span class="badge <%= e.published ? 'ok' : '' %>"><%= e.published ? 'Publié' : 'Brouillon' %></span></td>
+      <td class="right"><a class="btn secondary sm" href="/teach/exams/<%= e.id %>/results">Résultats</a></td></tr><% }) %>
+  </table><% if (!exams.length) { %><div class="empty">Aucun examen.</div><% } %></div>
+</main>
+<%- include('../partials/foot') %>

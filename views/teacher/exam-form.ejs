@@ -1,0 +1,8 @@
+<%- include('../partials/head') %>
+<main class="wrap" style="max-width:760px">
+  <div class="crumbs"><a href="/teach/exams">Examens</a> / Nouveau</div>
+  <div class="card"><h1>Nouvel examen</h1>
+    <form method="post" action="/teach/exams"><%- include('../partials/csrf') %><%- include('_exam-fields') %><p><button class="btn">Créer et ajouter les questions</button></p></form>
+  </div>
+</main>
+<%- include('../partials/foot') %>

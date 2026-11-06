@@ -1,0 +1,24 @@
+<%- include('../partials/head') %>
+<main class="wrap">
+  <div class="crumbs"><a href="/courses">Mes cours</a> / <%= course.title %></div>
+  <div class="page-head"><div><h1><%= course.title %></h1><p class="muted" style="margin:0"><span class="badge lvl lvl-<%= course.level %>"><%= course.level %></span> <%= course.teacher ? '· Prof. ' + course.teacher : '' %></p></div></div>
+  <div class="cols">
+    <div class="card">
+      <h2>Leçons</h2>
+      <% if (!lessons.length) { %><div class="empty">Les leçons arrivent bientôt.</div><% } %>
+      <ol class="lessons">
+      <% lessons.forEach((l, i) => { %>
+        <li class="<%= l.completed_at ? 'done' : '' %>"><span class="num"><%= l.completed_at ? '✓' : i + 1 %></span><a href="/lessons/<%= l.id %>"><%= l.title %></a></li>
+      <% }) %>
+      </ol>
+    </div>
+    <div>
+      <% if (course.description) { %><div class="card"><h3>À propos</h3><div class="content small"><%- md(course.description) %></div></div><% } %>
+      <div class="card"><h3>Examens du cours</h3>
+        <% if (!exams.length) { %><p class="muted small">Aucun examen.</p><% } %>
+        <% exams.forEach(e => { %><p><a href="/exams/<%= e.id %>">📝 <%= e.title %></a> <span class="small muted">· <%= e.duration_min %> min</span></p><% }) %>
+      </div>
+    </div>
+  </div>
+</main>
+<%- include('../partials/foot') %>

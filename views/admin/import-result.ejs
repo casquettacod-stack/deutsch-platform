@@ -1,0 +1,9 @@
+<%- include('../partials/head') %>
+<main class="wrap">
+  <div class="page-head"><h1>Import : <%= created.length %> compte(s) créé(s)</h1><a class="btn secondary" href="/admin/users">Retour</a></div>
+  <div class="card"><p class="muted">⚠ Notez ou imprimez ces identifiants maintenant : les mots de passe ne seront plus affichés.</p>
+  <div class="table-wrap"><table><tr><th>Nom</th><th>E-mail</th><th>Mot de passe temporaire</th></tr>
+    <% created.forEach(c => { %><tr><td><%= c.name %></td><td><%= c.email %></td><td><code><%= c.pwd %></code></td></tr><% }) %>
+  </table></div></div>
+</main>
+<%- include('../partials/foot') %>

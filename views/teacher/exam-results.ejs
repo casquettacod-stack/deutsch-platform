@@ -1,0 +1,24 @@
+<%- include('../partials/head') %>
+<main class="wrap">
+  <div class="crumbs"><a href="/teach/exams">Examens</a> / <a href="/teach/exams/<%= exam.id %>"><%= exam.title %></a> / Résultats</div>
+  <div class="page-head"><h1>Résultats</h1><a class="btn secondary" href="/teach/exams/<%= exam.id %>/results.csv">⬇ Export Excel (CSV)</a></div>
+  <%- include('../partials/flash') %>
+  <% const graded = attempts.filter(a => a.status === 'graded'); const avg = graded.length ? graded.reduce((s, a) => s + pct(a.score, a.max_score), 0) / graded.length : 0; const passed = graded.filter(a => pct(a.score, a.max_score) >= exam.pass_percent).length; %>
+  <div class="grid g4 stats" style="margin-bottom:18px">
+    <div class="stat"><div class="v"><%= attempts.length %></div><div class="l">Copies</div></div>
+    <div class="stat"><div class="v"><%= Math.round(avg) %>%</div><div class="l">Moyenne</div></div>
+    <div class="stat"><div class="v"><%= graded.length ? Math.round(passed / graded.length * 100) : 0 %>%</div><div class="l">Taux de réussite</div></div>
+    <div class="stat"><div class="v"><%= attempts.length - graded.length %></div><div class="l">À corriger</div></div>
+  </div>
+  <div class="card table-wrap"><table>
+    <tr><th>Étudiant</th><th>Soumis</th><th>Statut</th><th>Score</th><th></th></tr>
+    <% attempts.forEach(a => { const p = pct(a.score, a.max_score); %><tr>
+      <td><a href="/teach/students/<%= a.user_id %>"><strong><%= a.name %></strong></a><div class="small muted"><%= a.email %></div></td><td class="small"><%= fmtDate(a.submitted_at) %></td>
+      <td><span class="badge <%= a.status === 'graded' ? '' : 'warn' %>"><%= STATUS[a.status] %></span></td>
+      <td><%= a.score %>/<%= a.max_score %> <span class="badge <%= exam.kind === 'placement' ? '' : (p >= exam.pass_percent ? 'ok' : 'ko') %>"><%= p %>%</span> <span class="small muted"><%= a.feedback && exam.kind === 'placement' ? a.feedback : '' %></span></td>
+      <td class="right actions" style="justify-content:flex-end"><a class="btn sm" href="/teach/attempts/<%= a.id %>"><%= a.status === 'graded' ? 'Voir' : 'Corriger' %></a>
+        <form method="post" action="/teach/attempts/<%= a.id %>/reset" class="inline" data-confirm="Supprimer cette copie pour permettre à l'étudiant de repasser l'examen ?"><%- include('../partials/csrf') %><button class="btn danger sm">↺</button></form></td></tr>
+    <% }) %>
+  </table><% if (!attempts.length) { %><div class="empty">Aucune copie.</div><% } %></div>
+</main>
+<%- include('../partials/foot') %>

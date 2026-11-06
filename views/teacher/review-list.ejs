@@ -1,0 +1,10 @@
+<%- include('../partials/head') %>
+<main class="wrap">
+  <div class="page-head"><h1>Copies à corriger</h1></div>
+  <%- include('../partials/flash') %>
+  <div class="card table-wrap"><table>
+    <tr><th>Étudiant</th><th>Examen</th><th>Soumis</th><th>Score auto</th><th></th></tr>
+    <% pending.forEach(p => { %><tr><td><strong><%= p.name %></strong></td><td><%= p.title %> <span class="badge lvl lvl-<%= p.level %>"><%= p.level %></span></td><td class="small"><%= fmtDate(p.submitted_at) %></td><td><%= p.score %>/<%= p.max_score %></td><td class="right"><a class="btn sm" href="/teach/attempts/<%= p.id %>">Corriger</a></td></tr><% }) %>
+  </table><% if (!pending.length) { %><div class="empty">Aucune copie en attente 🎉</div><% } %></div>
+</main>
+<%- include('../partials/foot') %>

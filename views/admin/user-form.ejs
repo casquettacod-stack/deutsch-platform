@@ -1,0 +1,28 @@
+<%- include('../partials/head') %>
+<main class="wrap" style="max-width:760px">
+  <div class="crumbs"><a href="/admin/users">Utilisateurs</a> / <%= u.id ? u.name : 'Nouveau' %></div>
+  <%- include('../partials/flash') %>
+  <div class="card"><h1><%= u.id ? 'Modifier le compte' : 'Nouvel utilisateur' %></h1>
+  <form method="post" action="<%= u.id ? '/admin/users/' + u.id : '/admin/users' %>"><%- include('../partials/csrf') %>
+    <input type="hidden" name="lead" value="<%= lead %>">
+    <div class="row"><div class="field"><label>Nom complet</label><input type="text" name="name" value="<%= u.name %>" required></div>
+      <div class="field"><label>Téléphone</label><input type="tel" name="phone" value="<%= u.phone || '' %>"></div></div>
+    <div class="field"><label>E-mail (identifiant de connexion)</label><input type="email" name="email" value="<%= u.email || '' %>" required></div>
+    <div class="row">
+      <div class="field"><label>Rôle</label><select name="role"><option value="student" <%= u.role === 'student' ? 'selected' : '' %>>Étudiant</option><option value="teacher" <%= u.role === 'teacher' ? 'selected' : '' %>>Professeur</option><option value="admin" <%= u.role === 'admin' ? 'selected' : '' %>>Administrateur</option></select></div>
+      <div class="field"><label>Niveau</label><select name="level"><option value="">—</option><% LEVELS.forEach(l => { %><option <%= u.level === l ? 'selected' : '' %>><%= l %></option><% }) %></select></div>
+    </div>
+    <% if (!u.id) { %><div class="field"><label>Mot de passe</label><input type="text" name="password" minlength="8" placeholder="Laisser vide pour générer un mot de passe temporaire"></div>
+    <% } else { %><label class="check field"><input type="checkbox" name="active" value="1" <%= u.active ? 'checked' : '' %>> Compte actif</label><% } %>
+    <button class="btn"><%= u.id ? 'Enregistrer' : 'Créer le compte' %></button>
+    <% if (u.id && u.role === 'student') { %><a class="btn secondary" href="/teach/students/<%= u.id %>">Voir les notes</a><% } %>
+  </form></div>
+  <% if (u.id) { %>
+  <% if (groups && groups.length) { %><div class="card"><h3>Groupes</h3><% groups.forEach(g => { %><p><a href="/admin/groups/<%= g.id %>"><%= g.name %></a></p><% }) %></div><% } %>
+  <div class="card actions">
+    <form method="post" action="/admin/users/<%= u.id %>/reset-password" data-confirm="Générer un nouveau mot de passe temporaire ?"><%- include('../partials/csrf') %><button class="btn secondary">🔑 Réinitialiser le mot de passe</button></form>
+    <% if (u.id !== user.id) { %><form method="post" action="/admin/users/<%= u.id %>/delete" data-confirm="Supprimer définitivement ce compte et toutes ses notes ? (préférez « désactiver »)"><%- include('../partials/csrf') %><button class="btn danger">Supprimer</button></form><% } %>
+  </div>
+  <% } %>
+</main>
+<%- include('../partials/foot') %>

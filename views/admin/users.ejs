@@ -1,0 +1,21 @@
+<%- include('../partials/head') %>
+<main class="wrap">
+  <div class="page-head"><h1>Utilisateurs</h1><a class="btn" href="/admin/users/new">+ Nouvel utilisateur</a></div>
+  <%- include('../partials/flash') %>
+  <form class="card row" method="get" style="align-items:flex-end">
+    <div class="field" style="flex:3"><label>Recherche</label><input type="search" name="q" value="<%= q %>" placeholder="Nom, e-mail, téléphone"></div>
+    <div class="field"><label>Rôle</label><select name="role"><option value="">Tous</option><option value="student" <%= role === 'student' ? 'selected' : '' %>>Étudiants</option><option value="teacher" <%= role === 'teacher' ? 'selected' : '' %>>Professeurs</option><option value="admin" <%= role === 'admin' ? 'selected' : '' %>>Admins</option></select></div>
+    <div class="field" style="flex:0"><button class="btn">Filtrer</button></div>
+  </form>
+  <div class="card table-wrap"><table>
+    <tr><th>Nom</th><th>E-mail</th><th>Téléphone</th><th>Rôle</th><th>Niveau</th><th>Groupes</th><th>Statut</th></tr>
+    <% users.forEach(u => { %><tr><td><a href="/admin/users/<%= u.id %>"><strong><%= u.name %></strong></a></td><td class="small"><%= u.email %></td><td class="small"><%= u.phone %></td>
+      <td><%= { student: 'Étudiant', teacher: 'Professeur', admin: 'Admin' }[u.role] %></td><td><%= u.level ? u.level : '—' %></td><td class="small"><%= u.groups || '' %></td>
+      <td><span class="badge <%= u.active ? 'ok' : 'ko' %>"><%= u.active ? 'Actif' : 'Désactivé' %></span></td></tr><% }) %>
+  </table><% if (!users.length) { %><div class="empty">Aucun utilisateur trouvé.</div><% } %></div>
+  <div class="card"><h2>Importer des étudiants (Excel / CSV)</h2>
+    <p class="muted small">Collez une ligne par étudiant : <code>Nom;email;téléphone;niveau</code>. Des mots de passe temporaires seront générés.</p>
+    <form method="post" action="/admin/users/import"><%- include('../partials/csrf') %><textarea name="csv" placeholder="Youssef El Amrani;youssef@mail.com;0612345678;A1"></textarea><p><button class="btn">Importer</button></p></form>
+  </div>
+</main>
+<%- include('../partials/foot') %>

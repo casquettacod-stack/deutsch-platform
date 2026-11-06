@@ -1,0 +1,41 @@
+<%- include('../partials/head', { bare: true }) %>
+<div class="exam-bar"><div class="in">
+  <strong><%= exam.title %></strong>
+  <span class="saved-ind" id="saved">Sauvegarde automatique</span>
+  <span class="timer" id="timer">--:--</span>
+</div></div>
+<main class="wrap exam-wrap">
+  <form id="exam-form" method="post" action="/attempts/<%= attempt.id %>/submit" data-save="/attempts/<%= attempt.id %>/save" data-deadline="<%= attempt.deadline_at %>">
+    <%- include('../partials/csrf') %>
+    <% let n = 0; bySection.forEach(sec => { %>
+      <h2 class="section-title"><%= SECTION_ICON[sec.name] %> <%= sec.name %></h2>
+      <% sec.questions.forEach(q => { n++; const v = saved[q.id]; %>
+        <div class="q" id="q<%= q.id %>">
+          <div class="qh"><span>Frage <%= n %></span><span><%= q.points %> pt<%= q.points > 1 ? 's' : '' %></span></div>
+          <% if (q.media_path) { %>
+            <% if (isAudio(q.media_path)) { %><audio controls preload="none" controlsList="nodownload" src="/files/<%= q.media_path %>"></audio>
+            <% } else if (isImage(q.media_path)) { %><img src="/files/<%= q.media_path %>" alt="" style="border-radius:8px;margin-bottom:10px"><% } %>
+          <% } %>
+          <div class="prompt content"><%- md(q.prompt) %></div>
+          <% if (q.type === 'mcq') { q.options.forEach((o, i) => { %>
+            <label class="opt"><input type="radio" name="q[k<%= q.id %>]" value="<%= i %>" <%= String(v) === String(i) ? 'checked' : '' %>> <span><%= o %></span></label>
+          <% }) } else if (q.type === 'tf') { %>
+            <label class="opt"><input type="radio" name="q[k<%= q.id %>]" value="true" <%= v === 'true' ? 'checked' : '' %>> <span>Richtig</span></label>
+            <label class="opt"><input type="radio" name="q[k<%= q.id %>]" value="false" <%= v === 'false' ? 'checked' : '' %>> <span>Falsch</span></label>
+          <% } else if (q.type === 'short') { %>
+            <input type="text" name="q[k<%= q.id %>]" value="<%= v || '' %>" autocomplete="off" spellcheck="false">
+          <% } else { %>
+            <textarea name="q[k<%= q.id %>]" rows="10" spellcheck="false" data-words="w<%= q.id %>"><%= v || '' %></textarea>
+            <div class="help" id="w<%= q.id %>"></div>
+          <% } %>
+        </div>
+      <% }) %>
+    <% }) %>
+    <div class="card actions" style="justify-content:space-between">
+      <span class="muted small">Vérifiez vos réponses avant d'envoyer.</span>
+      <button class="btn lg accent">Envoyer l'examen</button>
+    </div>
+  </form>
+</main>
+<script src="/static/js/exam.js"></script>
+<%- include('../partials/foot') %>

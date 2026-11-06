@@ -1,0 +1,23 @@
+<%- include('../partials/head') %>
+<main class="wrap">
+  <div class="crumbs"><a href="/admin/groups">Groupes</a> / <%= group.name %></div>
+  <div class="page-head"><h1><%= group.name %></h1><a class="btn secondary" href="/teach/groups/<%= group.id %>">📒 Carnet de notes</a></div>
+  <%- include('../partials/flash') %>
+  <div class="cols">
+    <div class="card"><h2>Membres (<%= members.length %>)</h2>
+      <table><% members.forEach(m => { %><tr><td><a href="/admin/users/<%= m.id %>"><%= m.name %></a><div class="small muted"><%= m.email %></div></td><td><%= m.level || '' %></td>
+        <td class="right"><form method="post" action="/admin/groups/<%= group.id %>/members/<%= m.id %>/remove" class="inline"><%- include('../partials/csrf') %><button class="btn danger sm">Retirer</button></form></td></tr><% }) %></table>
+      <h3 style="margin-top:18px">Ajouter des étudiants</h3>
+      <form method="post" action="/admin/groups/<%= group.id %>/members"><%- include('../partials/csrf') %>
+        <input type="search" data-filter="#gpick label" placeholder="Rechercher…" style="margin-bottom:8px">
+        <div id="gpick" style="max-height:300px;overflow:auto;border:1px solid var(--border);border-radius:8px;padding:8px;margin-bottom:12px">
+          <% others.forEach(s => { %><label class="check"><input type="checkbox" name="user_ids" value="<%= s.id %>"> <%= s.name %> <span class="small muted"><%= s.email %> <%= s.level || '' %></span></label><% }) %>
+        </div><button class="btn">Ajouter</button></form>
+    </div>
+    <div class="card"><h2>Paramètres</h2>
+      <form method="post" action="/admin/groups/<%= group.id %>"><%- include('../partials/csrf') %><%- include('_group-fields', { g: group }) %><button class="btn">Enregistrer</button></form>
+      <form method="post" action="/admin/groups/<%= group.id %>/delete" data-confirm="Supprimer ce groupe ?" style="margin-top:12px"><%- include('../partials/csrf') %><button class="btn danger sm">Supprimer le groupe</button></form>
+    </div>
+  </div>
+</main>
+<%- include('../partials/foot') %>

@@ -1,0 +1,43 @@
+<%- include('../partials/head') %>
+<main class="wrap">
+  <div class="crumbs"><a href="/teach/courses">Cours</a> / <%= course.title %></div>
+  <div class="page-head"><h1><%= course.title %> <span class="badge lvl lvl-<%= course.level %>"><%= course.level %></span></h1>
+    <div class="actions"><a class="btn" href="/teach/courses/<%= course.id %>/lessons/new">+ Leçon</a><a class="btn secondary" href="/courses/<%= course.id %>">Aperçu étudiant</a></div></div>
+  <%- include('../partials/flash') %>
+  <div class="cols">
+    <div>
+      <div class="card"><h2>Leçons (<%= lessons.length %>)</h2>
+        <% if (!lessons.length) { %><div class="empty">Aucune leçon. <a href="/teach/courses/<%= course.id %>/lessons/new">Ajouter la première leçon</a></div><% } %>
+        <ol class="lessons"><% lessons.forEach(l => { %>
+          <li><span class="num"><%= l.position %></span>
+            <div style="flex:1"><a href="/lessons/<%= l.id %>"><strong><%= l.title %></strong></a>
+              <div class="small muted"><%= l.video_url ? '▶ vidéo ' : '' %><%= l.file_name ? '📎 ' + l.file_name : '' %></div></div>
+            <a class="btn secondary sm" href="/teach/lessons/<%= l.id %>/edit">Modifier</a>
+            <form method="post" action="/teach/lessons/<%= l.id %>/delete" class="inline" data-confirm="Supprimer cette leçon ?"><%- include('../partials/csrf') %><button class="btn danger sm">✕</button></form>
+          </li>
+        <% }) %></ol>
+      </div>
+      <div class="card" id="students"><h2>Étudiants inscrits (<%= enrolled.length %>)</h2>
+        <div class="table-wrap"><table>
+          <% enrolled.forEach(s => { %><tr><td><a href="/teach/students/<%= s.id %>"><%= s.name %></a><div class="small muted"><%= s.email %></div></td><td><%= s.level ? s.level : '' %></td><td class="small"><%= s.done %>/<%= lessons.length %> leçons</td>
+            <td class="right"><form method="post" action="/teach/courses/<%= course.id %>/unenroll/<%= s.id %>" class="inline" data-confirm="Retirer cet étudiant du cours ?"><%- include('../partials/csrf') %><button class="btn danger sm">Retirer</button></form></td></tr><% }) %>
+        </table></div>
+        <h3 style="margin-top:18px">Inscrire des étudiants</h3>
+        <form method="post" action="/teach/courses/<%= course.id %>/enroll"><%- include('../partials/csrf') %>
+          <div class="row"><div class="field"><label>Tout un groupe</label><select name="group_id"><option value="">—</option><% groups.forEach(g => { %><option value="<%= g.id %>"><%= g.name %> (<%= g.level %>)</option><% }) %></select></div>
+            <div class="field"><label>Rechercher</label><input type="search" data-filter="#pick label" placeholder="Nom ou e-mail"></div></div>
+          <div id="pick" style="max-height:260px;overflow:auto;border:1px solid var(--border);border-radius:8px;padding:8px;margin-bottom:12px">
+            <% others.forEach(s => { %><label class="check"><input type="checkbox" name="user_ids" value="<%= s.id %>"> <%= s.name %> <span class="small muted"><%= s.email %> <%= s.level || '' %></span></label><% }) %>
+            <% if (!others.length) { %><span class="muted small">Tous les étudiants sont déjà inscrits.</span><% } %>
+          </div>
+          <button class="btn">Inscrire</button>
+        </form>
+      </div>
+    </div>
+    <div class="card"><h2>Paramètres</h2>
+      <form method="post" action="/teach/courses/<%= course.id %>"><%- include('../partials/csrf') %><%- include('_course-fields') %><p><button class="btn">Enregistrer</button></p></form>
+      <form method="post" action="/teach/courses/<%= course.id %>/delete" data-confirm="Supprimer définitivement ce cours et toutes ses leçons ?"><%- include('../partials/csrf') %><button class="btn danger sm">Supprimer le cours</button></form>
+    </div>
+  </div>
+</main>
+<%- include('../partials/foot') %>

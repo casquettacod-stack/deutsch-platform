@@ -1,0 +1,26 @@
+<%- include('../partials/head') %>
+<main class="wrap" style="max-width:960px">
+  <div class="crumbs"><a href="/teach/exams/<%= exam.id %>/results"><%= exam.title %></a> / <%= attempt.name %></div>
+  <div class="page-head"><div><h1>Copie de <%= attempt.name %></h1><p class="muted" style="margin:0"><%= fmtDate(attempt.submitted_at) %> · <%= STATUS[attempt.status] %> · <strong><%= attempt.score %>/<%= attempt.max_score %></strong> (<%= pct(attempt.score, attempt.max_score) %>%)</p></div></div>
+  <%- include('../partials/flash') %>
+  <form method="post" action="/teach/attempts/<%= attempt.id %>/grade"><%- include('../partials/csrf') %>
+  <% rows.forEach((q, i) => { %>
+    <div class="q" style="<%= q.type === 'essay' ? 'border-color:var(--accent)' : '' %>">
+      <div class="qh"><span><%= SECTION_ICON[q.section] %> <%= q.section %> · Frage <%= i + 1 %> · <%= QTYPE[q.type] %></span><span><%= q.points %> pt</span></div>
+      <div class="content"><%- md(q.prompt) %></div>
+      <% if (q.type === 'mcq') { %><p>Réponse : <strong><%= q.response != null && q.options[q.response] !== undefined ? q.options[q.response] : '—' %></strong> · Attendu : <%= q.options[q.answer] %></p>
+      <% } else if (q.type === 'tf') { %><p>Réponse : <strong><%= q.response === 'true' ? 'Richtig' : q.response === 'false' ? 'Falsch' : '—' %></strong> · Attendu : <%= q.answer === 'true' ? 'Richtig' : 'Falsch' %></p>
+      <% } else if (q.type === 'short') { %><p>Réponse : <strong><%= q.response || '—' %></strong> · Accepté : <%= q.answer %></p>
+      <% } else { %><div class="card" style="background:var(--surface-2);white-space:pre-wrap;margin-bottom:10px"><%= q.response || '— (pas de réponse)' %></div>
+        <div class="small muted"><%= (String(q.response || '').trim().match(/\S+/g) || []).length %> mots</div><% } %>
+      <div class="row" style="align-items:flex-end">
+        <div class="field" style="flex:0 1 140px"><label>Points (/ <%= q.points %>)</label><input type="number" step="0.25" min="0" max="<%= q.points %>" name="points[k<%= q.id %>]" value="<%= q.points_awarded ?? '' %>"></div>
+        <div class="field"><label>Commentaire</label><input type="text" name="comments[k<%= q.id %>]" value="<%= q.comment || '' %>" placeholder="Remarque pour l'étudiant"></div>
+      </div>
+    </div>
+  <% }) %>
+  <div class="card"><div class="field"><label>Appréciation générale</label><textarea name="feedback" placeholder="Sehr gut! Attention aux articles…"><%= attempt.feedback || '' %></textarea></div>
+    <button class="btn lg">Valider la correction</button></div>
+  </form>
+</main>
+<%- include('../partials/foot') %>

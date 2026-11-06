@@ -1,0 +1,16 @@
+<%- include('../partials/head') %>
+<main class="wrap">
+  <div class="page-head"><h1>Examens & tests</h1></div>
+  <% if (!exams.length) { %><div class="empty">Aucun examen disponible.</div><% } %>
+  <div class="grid g3">
+  <% exams.forEach(e => { %>
+    <a class="tile" href="/exams/<%= e.id %>">
+      <div class="actions"><span class="badge lvl lvl-<%= e.level %>"><%= e.level %></span><span class="badge"><%= KIND[e.kind] %></span>
+      <% if (e.open) { %><span class="badge warn">En cours</span><% } else if (e.remaining === 0) { %><span class="badge ok">Terminé</span><% } %></div>
+      <h3 style="margin:10px 0 6px"><%= e.title %></h3>
+      <div class="small muted">⏱ <%= e.duration_min %> min · <%= e.nq %> questions<%= e.remaining > 0 ? ' · ' + e.remaining + ' tentative(s)' : '' %></div>
+    </a>
+  <% }) %>
+  </div>
+</main>
+<%- include('../partials/foot') %>

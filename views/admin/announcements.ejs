@@ -1,0 +1,11 @@
+<%- include('../partials/head') %>
+<main class="wrap" style="max-width:860px">
+  <div class="page-head"><h1>Annonces</h1></div>
+  <div class="card"><h2>Nouvelle annonce</h2><form method="post" action="/admin/announcements"><%- include('../partials/csrf') %>
+    <div class="field"><label>Titre</label><input type="text" name="title" required></div>
+    <div class="field"><label>Message</label><textarea name="body" required></textarea></div><button class="btn">Publier</button></form></div>
+  <% items.forEach(a => { %><div class="card"><div class="page-head" style="margin:0"><h3><%= a.title %></h3>
+    <form method="post" action="/admin/announcements/<%= a.id %>/delete" data-confirm="Supprimer ?"><%- include('../partials/csrf') %><button class="btn danger sm">Supprimer</button></form></div>
+    <div class="small muted"><%= fmtDate(a.created_at) %></div><div class="content"><%- md(a.body) %></div></div><% }) %>
+</main>
+<%- include('../partials/foot') %>

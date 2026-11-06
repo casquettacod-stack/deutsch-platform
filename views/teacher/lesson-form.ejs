@@ -1,0 +1,17 @@
+<%- include('../partials/head') %>
+<main class="wrap" style="max-width:860px">
+  <div class="crumbs"><a href="/teach/courses/<%= course.id %>"><%= course.title %></a> / <%= lesson.id ? 'Modifier' : 'Nouvelle leçon' %></div>
+  <div class="card"><h1><%= lesson.id ? 'Modifier la leçon' : 'Nouvelle leçon' %></h1>
+  <form method="post" enctype="multipart/form-data" action="<%= lesson.id ? '/teach/lessons/' + lesson.id : '/teach/courses/' + course.id + '/lessons' %>">
+    <%- include('../partials/csrf') %>
+    <div class="row"><div class="field" style="flex:4"><label>Titre</label><input type="text" name="title" value="<%= lesson.title || '' %>" required placeholder="Lektion 1 – Hallo! Ich bin…"></div>
+      <div class="field" style="flex:1"><label>Ordre</label><input type="number" name="position" value="<%= lesson.position || 0 %>"></div></div>
+    <div class="field"><label>Lien vidéo (YouTube, Vimeo…)</label><input type="url" name="video_url" value="<%= lesson.video_url || '' %>" placeholder="https://www.youtube.com/watch?v=..."></div>
+    <div class="field"><label>Contenu de la leçon</label><textarea name="content" rows="14" placeholder="# Titre&#10;Texte, vocabulaire…&#10;- Liste&#10;**gras**, *italique*"><%= lesson.content || '' %></textarea>
+      <div class="help">Mise en forme : # Titre, **gras**, *italique*, - liste, [lien](https://...)</div></div>
+    <div class="field"><label>Fichier joint (PDF, audio MP3, vidéo MP4, Word, image…)</label><input type="file" name="file">
+      <% if (lesson.file_name) { %><div class="help">Actuel : <%= lesson.file_name %> · <label class="check inline"><input type="checkbox" name="remove_file" value="1"> supprimer</label></div><% } %></div>
+    <button class="btn">Enregistrer</button> <a class="btn secondary" href="/teach/courses/<%= course.id %>">Annuler</a>
+  </form></div>
+</main>
+<%- include('../partials/foot') %>

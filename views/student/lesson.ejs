@@ -1,0 +1,25 @@
+<%- include('../partials/head') %>
+<main class="wrap" style="max-width:900px">
+  <div class="crumbs"><a href="/courses/<%= course.id %>"><%= course.title %></a> / <%= lesson.title %></div>
+  <h1><%= lesson.title %></h1>
+  <% if (embed) { %><div class="video"><iframe src="<%= embed %>" allowfullscreen allow="encrypted-media; picture-in-picture"></iframe></div>
+  <% } else if (lesson.video_url) { %><p><a class="btn secondary" href="<%= lesson.video_url %>" target="_blank" rel="noopener">▶ Voir la vidéo</a></p><% } %>
+  <% if (lesson.file_path) { %>
+    <div class="card">
+      <% if (isAudio(lesson.file_path)) { %><audio controls preload="none" src="/files/<%= lesson.file_path %>"></audio>
+      <% } else if (isVideo(lesson.file_path)) { %><video controls preload="metadata" src="/files/<%= lesson.file_path %>" style="width:100%"></video>
+      <% } else if (isImage(lesson.file_path)) { %><img src="/files/<%= lesson.file_path %>" alt="">
+      <% } %>
+      <a class="btn secondary sm" href="/files/<%= lesson.file_path %>?dl=1&as=<%= encodeURIComponent(lesson.file_name || 'document') %>">⬇ Télécharger « <%= lesson.file_name %> »</a>
+    </div>
+  <% } %>
+  <% if (lesson.content) { %><div class="card content"><%- md(lesson.content) %></div><% } %>
+  <div class="actions" style="justify-content:space-between">
+    <span><% if (prev) { %><a class="btn secondary" href="/lessons/<%= prev.id %>">← <%= prev.title %></a><% } %></span>
+    <% if (user.role === 'student') { %>
+    <form method="post" action="/lessons/<%= lesson.id %>/done" class="inline"><%- include('../partials/csrf') %>
+      <button class="btn"><%= done ? (next ? 'Leçon suivante →' : 'Retour au cours') : '✓ Terminer la leçon' %></button></form>
+    <% } else if (next) { %><a class="btn" href="/lessons/<%= next.id %>"><%= next.title %> →</a><% } %>
+  </div>
+</main>
+<%- include('../partials/foot') %>

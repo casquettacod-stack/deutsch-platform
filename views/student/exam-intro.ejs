@@ -1,0 +1,32 @@
+<%- include('../partials/head') %>
+<main class="wrap" style="max-width:820px">
+  <div class="crumbs"><a href="/exams">Examens</a> / <%= exam.title %></div>
+  <%- include('../partials/flash') %>
+  <div class="card">
+    <div class="actions"><span class="badge lvl lvl-<%= exam.level %>"><%= exam.level %></span><span class="badge"><%= KIND[exam.kind] %></span></div>
+    <h1 style="margin-top:10px"><%= exam.title %></h1>
+    <% if (exam.description) { %><div class="content"><%- md(exam.description) %></div><% } %>
+    <div class="grid g3" style="margin:16px 0">
+      <div class="stat"><div class="v"><%= exam.duration_min %></div><div class="l">minutes</div></div>
+      <div class="stat"><div class="v"><%= sections.reduce((a, s) => a + s.n, 0) %></div><div class="l">questions</div></div>
+      <div class="stat"><div class="v"><%= exam.kind === 'placement' ? '—' : exam.pass_percent + '%' %></div><div class="l">pour réussir</div></div>
+    </div>
+    <% if (sections.length) { %><p><% sections.forEach(s => { %><span class="badge" style="margin-right:6px"><%= SECTION_ICON[s.section] %> <%= s.section %> · <%= s.n %></span><% }) %></p><% } %>
+    <ul class="small muted">
+      <li>Le minuteur démarre dès que vous cliquez sur « Commencer ».</li>
+      <li>Vos réponses sont enregistrées automatiquement. Si vous fermez la page, vous pourrez reprendre.</li>
+      <li>À la fin du temps, l'examen est envoyé automatiquement.</li>
+      <li>Tentatives autorisées : <%= exam.max_attempts > 0 ? exam.max_attempts : 'illimitées' %> (utilisées : <%= attempts.length %>).</li>
+    </ul>
+    <% const open = attempts.find(a => a.status === 'in_progress'); const canStart = open || exam.max_attempts === 0 || attempts.length < exam.max_attempts; %>
+    <% if (canStart && sections.length) { %>
+      <form method="post" action="/exams/<%= exam.id %>/start"><%- include('../partials/csrf') %><button class="btn lg accent"><%= open ? 'Reprendre l’examen' : 'Commencer' %></button></form>
+    <% } else if (!sections.length) { %><p class="muted">Cet examen ne contient pas encore de questions.</p><% } %>
+  </div>
+  <% const past = attempts.filter(a => a.status !== 'in_progress'); if (past.length) { %>
+  <div class="card"><h3>Vos tentatives</h3><table>
+    <% past.forEach(a => { %><tr><td><%= fmtDate(a.submitted_at) %></td><td><%= STATUS[a.status] %></td><td><%= a.status === 'graded' ? a.score + ' / ' + a.max_score : '' %></td><td class="right"><a href="/results/<%= a.id %>">Détails</a></td></tr><% }) %>
+  </table></div>
+  <% } %>
+</main>
+<%- include('../partials/foot') %>

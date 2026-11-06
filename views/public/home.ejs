@@ -1,0 +1,76 @@
+<%- include('../partials/head') %>
+<header class="hero"><div class="in">
+  <div>
+    <span class="kicker">🇩🇪 Deutsch lernen · A1 → C2</span>
+    <h1>Apprenez l'allemand et réussissez vos examens</h1>
+    <p>Cours en présentiel et en ligne, préparation aux certificats Goethe, telc et ÖSD, tests en ligne et suivi de vos notes — tout sur une seule plateforme.</p>
+    <div class="actions" style="margin-top:22px">
+      <a class="btn accent lg" href="/register">Créer mon compte</a>
+      <a class="btn secondary lg" href="#contact">Demander une inscription</a>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Ce que vous trouvez sur la plateforme</h3>
+    <ul class="lessons">
+      <li><span class="num">1</span> Test de niveau gratuit (Einstufungstest)</li>
+      <li><span class="num">2</span> Cours en ligne : vidéos, PDF, audio</li>
+      <li><span class="num">3</span> Examens blancs Lesen · Hören · Schreiben</li>
+      <li><span class="num">4</span> Notes et résultats en temps réel</li>
+    </ul>
+  </div>
+</div></header>
+
+<section class="section" id="niveaux">
+  <h2>Les niveaux du Cadre européen (GER / CECR)</h2>
+  <p class="lead">Chaque niveau se termine par un examen. Nos groupes suivent le programme officiel du Cadre européen commun de référence.</p>
+  <div class="grid g3 levels">
+  <% LEVELS.forEach(l => { const i = LEVEL_INFO[l]; %>
+    <div class="tile"><h3><span><%= l %> · <%= i.name %></span><span class="badge lvl lvl-<%= l %>"><%= i.hours %></span></h3><p class="muted" style="margin:0"><%= i.desc %></p></div>
+  <% }) %>
+  </div>
+</section>
+
+<section class="section" id="examens" style="padding-top:0">
+  <h2>Préparation aux examens officiels</h2>
+  <p class="lead">Nos examens blancs reproduisent les 4 modules des certificats officiels.</p>
+  <div class="grid g4">
+    <div class="tile feature"><div class="ic">📖</div><h3>Lesen</h3><p class="muted">Compréhension écrite : textes, annonces, articles.</p></div>
+    <div class="tile feature"><div class="ic">🎧</div><h3>Hören</h3><p class="muted">Compréhension orale avec fichiers audio.</p></div>
+    <div class="tile feature"><div class="ic">✍️</div><h3>Schreiben</h3><p class="muted">Production écrite corrigée par nos professeurs.</p></div>
+    <div class="tile feature"><div class="ic">🗣️</div><h3>Sprechen</h3><p class="muted">Expression orale évaluée en présentiel.</p></div>
+  </div>
+</section>
+
+<% if (courses.length) { %>
+<section class="section" style="padding-top:0">
+  <h2>Nos cours</h2>
+  <div class="grid g3">
+  <% courses.forEach(c => { %>
+    <div class="tile"><span class="badge lvl lvl-<%= c.level %>"><%= c.level %></span><h3 style="margin-top:8px"><%= c.title %></h3><p class="muted small"><%= plain(c.description).slice(0, 150) %></p></div>
+  <% }) %>
+  </div>
+</section>
+<% } %>
+
+<section class="section" id="contact" style="padding-top:0">
+  <div class="card" style="max-width:720px;margin:0 auto">
+    <h2 style="text-align:left">Demande d'inscription</h2>
+    <p class="muted">Laissez vos coordonnées, notre équipe vous rappelle pour fixer votre test de niveau et votre groupe.</p>
+    <%- include('../partials/flash') %>
+    <form method="post" action="/contact">
+      <%- include('../partials/csrf') %>
+      <div class="row">
+        <div class="field"><label>Nom complet *</label><input type="text" name="name" required maxlength="120"></div>
+        <div class="field"><label>Téléphone / WhatsApp *</label><input type="tel" name="phone" required maxlength="40"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>E-mail</label><input type="email" name="email" maxlength="160"></div>
+        <div class="field"><label>Niveau souhaité</label><select name="level"><option value="">Je ne sais pas</option><% LEVELS.forEach(l => { %><option><%= l %></option><% }) %></select></div>
+      </div>
+      <div class="field"><label>Message</label><textarea name="message" maxlength="2000" placeholder="Objectif : Ausbildung, études, visa, travail…"></textarea></div>
+      <button class="btn lg">Envoyer ma demande</button>
+    </form>
+  </div>
+</section>
+<footer class="footer">© <%= new Date().getFullYear() %> <%= centerName %> · <a href="/login">Espace étudiants &amp; professeurs</a></footer>
+<%- include('../partials/foot') %>

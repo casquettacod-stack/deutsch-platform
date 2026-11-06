@@ -1,0 +1,15 @@
+<%- include('../partials/head') %>
+<main class="wrap">
+  <div class="page-head"><div><h1><%= s.name %> <% if (s.level) { %><span class="badge lvl lvl-<%= s.level %>"><%= s.level %></span><% } %></h1><p class="muted" style="margin:0"><%= s.email %> · <%= s.phone || '' %></p></div>
+  <% if (user.role === 'admin') { %><a class="btn secondary" href="/admin/users/<%= s.id %>">Modifier le compte</a><% } %></div>
+  <div class="cols">
+    <div class="card"><h2>Examens</h2><div class="table-wrap"><table>
+      <% attempts.forEach(a => { const p = pct(a.score, a.max_score); %><tr><td><%= a.title %></td><td class="small"><%= fmtDate(a.submitted_at || a.started_at) %></td><td><%= STATUS[a.status] %></td><td><%= a.status !== 'in_progress' ? a.score + '/' + a.max_score + ' (' + p + '%)' : '' %></td><td><% if (a.status !== 'in_progress') { %><a href="/teach/attempts/<%= a.id %>">Voir</a><% } %></td></tr><% }) %>
+    </table></div><% if (!attempts.length) { %><p class="muted">Aucun examen.</p><% } %>
+    <h2 style="margin-top:20px">Notes</h2><table>
+      <% grades.forEach(g => { %><tr><td><%= g.title %></td><td><%= g.skill || '' %></td><td><%= g.score %>/<%= g.max_score %></td><td class="small muted"><%= g.group_name || '' %></td></tr><% }) %>
+    </table><% if (!grades.length) { %><p class="muted">Aucune note.</p><% } %></div>
+    <div class="card"><h3>Cours suivis</h3><% courses.forEach(c => { %><p><a href="/teach/courses/<%= c.id %>"><%= c.title %></a></p><% }) %><% if (!courses.length) { %><p class="muted small">Aucun.</p><% } %></div>
+  </div>
+</main>
+<%- include('../partials/foot') %>

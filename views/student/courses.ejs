@@ -1,0 +1,11 @@
+<%- include('../partials/head') %>
+<main class="wrap">
+  <div class="page-head"><h1>Mes cours</h1></div>
+  <% if (!courses.length) { %><div class="empty">Aucun cours attribué. Contactez votre professeur ou l'accueil.</div><% } %>
+  <div class="grid g3">
+  <% courses.forEach(c => { %>
+    <a class="tile" href="/courses/<%= c.id %>"><span class="badge lvl lvl-<%= c.level %>"><%= c.level %></span><h3 style="margin:8px 0"><%= c.title %></h3><p class="small muted"><%= plain(c.description).slice(0, 150) %></p><div class="small"><%= c.total %> leçons</div></a>
+  <% }) %>
+  </div>
+</main>
+<%- include('../partials/foot') %>

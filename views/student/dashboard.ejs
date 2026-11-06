@@ -1,0 +1,59 @@
+<%- include('../partials/head') %>
+<main class="wrap">
+  <div class="page-head"><div><h1>Hallo, <%= user.name.split(' ')[0] %> 👋</h1><p class="muted" style="margin:0">Votre niveau : <% if (user.level) { %><span class="badge lvl lvl-<%= user.level %>"><%= user.level %></span><% } else { %>non défini<% } %></p></div></div>
+  <%- include('../partials/flash') %>
+  <% if (placement && !placementDone) { %>
+    <div class="card" style="border-color:var(--accent);background:#fffaf0">
+      <h3>🎯 Passez votre test de niveau (Einstufungstest)</h3>
+      <p class="muted">Découvrez votre niveau en quelques minutes pour être placé dans le bon groupe.</p>
+      <a class="btn accent" href="/exams/<%= placement.id %>">Commencer le test</a>
+    </div>
+  <% } %>
+  <div class="cols">
+    <div>
+      <div class="card">
+        <h2>Mes cours</h2>
+        <% if (!courses.length) { %><div class="empty">Aucun cours attribué pour l'instant. Votre professeur vous inscrira à votre cours.</div><% } %>
+        <div class="grid g2">
+        <% courses.forEach(c => { const p = c.total ? Math.round(c.done / c.total * 100) : 0; %>
+          <a class="tile" href="/courses/<%= c.id %>">
+            <span class="badge lvl lvl-<%= c.level %>"><%= c.level %></span>
+            <h3 style="margin:8px 0"><%= c.title %></h3>
+            <div class="progress"><span style="width:<%= p %>%"></span></div>
+            <div class="small muted" style="margin-top:6px"><%= c.done %>/<%= c.total %> leçons · <%= p %>%</div>
+          </a>
+        <% }) %>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Examens disponibles</h2>
+        <% if (!exams.length) { %><p class="muted">Aucun examen disponible pour le moment.</p><% } %>
+        <table><% exams.forEach(e => { %>
+          <tr><td><strong><%= e.title %></strong><div class="small muted"><%= KIND[e.kind] %> · <%= e.duration_min %> min · <%= e.nq %> questions</div></td>
+          <td class="right"><a class="btn sm" href="/exams/<%= e.id %>">Voir</a></td></tr>
+        <% }) %></table>
+      </div>
+    </div>
+    <div>
+      <% groups.forEach(g => { %>
+        <div class="card"><h3>👥 <%= g.name %></h3><p class="small" style="margin:0"><span class="badge lvl lvl-<%= g.level %>"><%= g.level %></span> <%= g.teacher ? '· ' + g.teacher : '' %></p><% if (g.schedule) { %><p class="small muted" style="margin:6px 0 0">🗓 <%= g.schedule %></p><% } %></div>
+      <% }) %>
+      <div class="card">
+        <h3>Derniers résultats</h3>
+        <% if (!results.length) { %><p class="muted small">Pas encore de résultat.</p><% } %>
+        <% results.forEach(r => { const p = pct(r.score, r.max_score); %>
+          <a href="/results/<%= r.id %>" style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);color:inherit">
+            <span class="small"><%= r.title %></span>
+            <% if (r.status === 'graded') { %><span class="badge <%= r.kind === 'placement' ? '' : (p >= r.pass_percent ? 'ok' : 'ko') %>"><%= p %>%</span><% } else { %><span class="badge warn">En correction</span><% } %>
+          </a>
+        <% }) %>
+      </div>
+      <div class="card">
+        <h3>📢 Annonces</h3>
+        <% if (!news.length) { %><p class="muted small">Aucune annonce.</p><% } %>
+        <% news.forEach(n => { %><div style="margin-bottom:12px"><strong><%= n.title %></strong><div class="small muted"><%= fmtDate(n.created_at) %></div><div class="small content"><%- md(n.body) %></div></div><% }) %>
+      </div>
+    </div>
+  </div>
+</main>
+<%- include('../partials/foot') %>

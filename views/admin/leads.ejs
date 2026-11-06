@@ -1,0 +1,14 @@
+<%- include('../partials/head') %>
+<main class="wrap">
+  <div class="page-head"><h1>Demandes d'inscription</h1></div>
+  <div class="card table-wrap"><table>
+    <tr><th>Nom</th><th>Contact</th><th>Niveau</th><th>Message</th><th>Date</th><th></th></tr>
+    <% leads.forEach(l => { %><tr style="<%= l.handled ? 'opacity:.55' : '' %>"><td><strong><%= l.name %></strong></td>
+      <td class="small"><a href="tel:<%= l.phone %>"><%= l.phone %></a><br><a href="https://wa.me/<%= String(l.phone).replace(/\D/g, '').replace(/^0/, '212') %>" target="_blank" rel="noopener">WhatsApp</a><% if (l.email) { %><br><%= l.email %><% } %></td>
+      <td><%= l.level || '—' %></td><td class="small"><%= l.message %></td><td class="small"><%= fmtDate(l.created_at) %></td>
+      <td class="actions"><% if (!l.handled) { %><a class="btn sm" href="/admin/users/new?lead=<%= l.id %>&name=<%= encodeURIComponent(l.name) %>&phone=<%= encodeURIComponent(l.phone) %>&email=<%= encodeURIComponent(l.email || '') %>&level=<%= l.level || '' %>">Créer compte</a><% } %>
+        <form method="post" action="/admin/leads/<%= l.id %>/toggle" class="inline"><%- include('../partials/csrf') %><button class="btn secondary sm"><%= l.handled ? 'Rouvrir' : '✓ Traité' %></button></form>
+        <form method="post" action="/admin/leads/<%= l.id %>/delete" class="inline" data-confirm="Supprimer ?"><%- include('../partials/csrf') %><button class="btn danger sm">✕</button></form></td></tr><% }) %>
+  </table><% if (!leads.length) { %><div class="empty">Aucune demande.</div><% } %></div>
+</main>
+<%- include('../partials/foot') %>

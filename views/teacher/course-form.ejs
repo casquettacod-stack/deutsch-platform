@@ -1,0 +1,8 @@
+<%- include('../partials/head') %>
+<main class="wrap" style="max-width:760px">
+  <div class="crumbs"><a href="/teach/courses">Cours</a> / Nouveau</div>
+  <div class="card"><h1>Nouveau cours</h1>
+    <form method="post" action="/teach/courses"><%- include('../partials/csrf') %><%- include('_course-fields') %><p><button class="btn">Créer le cours</button></p></form>
+  </div>
+</main>
+<%- include('../partials/foot') %>

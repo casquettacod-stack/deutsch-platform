@@ -1,0 +1,15 @@
+<%- include('../partials/head') %>
+<main class="wrap"><div class="card auth">
+  <h1>Connexion</h1>
+  <p class="muted">Willkommen zurück! Connectez-vous à votre espace.</p>
+  <%- include('../partials/flash') %>
+  <form method="post" action="/login">
+    <%- include('../partials/csrf') %>
+    <input type="hidden" name="next" value="<%= next %>">
+    <div class="field"><label>E-mail</label><input type="email" name="email" required autofocus autocomplete="username"></div>
+    <div class="field"><label>Mot de passe</label><input type="password" name="password" required autocomplete="current-password"></div>
+    <button class="btn block lg">Se connecter</button>
+  </form>
+  <p class="small muted" style="margin-top:16px">Pas encore de compte ? <a href="/register">S'inscrire</a>. Mot de passe oublié ? Contactez l'accueil du centre.</p>
+</div></main>
+<%- include('../partials/foot') %>

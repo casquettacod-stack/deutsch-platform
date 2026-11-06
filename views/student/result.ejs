@@ -1,0 +1,41 @@
+<%- include('../partials/head') %>
+<main class="wrap" style="max-width:900px">
+  <div class="crumbs"><a href="/results">Mes notes</a> / <%= exam.title %></div>
+  <%- include('../partials/flash') %>
+  <div class="card" style="text-align:center">
+    <h1><%= exam.title %></h1>
+    <% if (attempt.status === 'pending_review') { %>
+      <p class="badge warn" style="font-size:1rem">⏳ En cours de correction</p>
+      <p class="muted">Les parties écrites sont corrigées par votre professeur. Score provisoire (parties automatiques) : <%= attempt.score %> / <%= attempt.max_score %></p>
+    <% } else { const p = pct(attempt.score, attempt.max_score); %>
+      <div class="score-big"><%= p %>%</div>
+      <p><strong><%= attempt.score %> / <%= attempt.max_score %></strong> points</p>
+      <% if (exam.kind !== 'placement') { %><p><span class="badge <%= p >= exam.pass_percent ? 'ok' : 'ko' %>" style="font-size:1rem;padding:6px 16px"><%= p >= exam.pass_percent ? '✓ Bestanden – Réussi' : '✗ Nicht bestanden' %></span></p><% } %>
+    <% } %>
+    <% if (attempt.feedback) { %><div class="card" style="text-align:left;background:var(--surface-2)"><strong>💬 Commentaire :</strong> <%= attempt.feedback %></div><% } %>
+    <div class="grid g3" style="margin-top:16px">
+      <% sections.forEach(s => { %><div class="stat"><div class="l"><%= SECTION_ICON[s.name] %> <%= s.name %></div><div class="v" style="font-size:1.3rem"><%= Math.round(s.pts * 100) / 100 %> / <%= s.max %></div></div><% }) %>
+    </div>
+  </div>
+  <% if (showAnswers) { %>
+    <h2>Correction détaillée</h2>
+    <% rows.forEach((q, i) => { %>
+      <div class="q">
+        <div class="qh"><span><%= SECTION_ICON[q.section] %> Frage <%= i + 1 %></span><span class="badge <%= q.points_awarded >= q.points ? 'ok' : (q.points_awarded > 0 ? 'warn' : 'ko') %>"><%= q.points_awarded || 0 %> / <%= q.points %></span></div>
+        <div class="prompt content"><%- md(q.prompt) %></div>
+        <% if (q.type === 'mcq') { q.options.forEach((o, j) => { const mine = String(q.response) === String(j), good = String(q.answer) === String(j); %>
+          <div class="opt <%= good ? 'correct' : (mine ? 'wrong' : '') %>"><%= mine ? '●' : '○' %> <span><%= o %></span></div>
+        <% }) } else if (q.type === 'tf') { [['true','Richtig'],['false','Falsch']].forEach(([val, lab]) => { const mine = q.response === val, good = q.answer === val; %>
+          <div class="opt <%= good ? 'correct' : (mine ? 'wrong' : '') %>"><%= mine ? '●' : '○' %> <span><%= lab %></span></div>
+        <% }) } else if (q.type === 'short') { %>
+          <p>Votre réponse : <strong><%= q.response || '—' %></strong></p>
+          <p class="small muted">Réponse attendue : <%= String(q.answer || '').split('|')[0] %></p>
+        <% } else { %>
+          <div class="card" style="background:var(--surface-2);white-space:pre-wrap"><%= q.response || '—' %></div>
+        <% } %>
+        <% if (q.comment) { %><p class="small"><strong>Commentaire :</strong> <%= q.comment %></p><% } %>
+      </div>
+    <% }) %>
+  <% } %>
+</main>
+<%- include('../partials/foot') %>
